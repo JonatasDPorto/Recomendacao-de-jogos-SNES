@@ -1,7 +1,7 @@
 const Telegraf = require('telegraf')
 
 const Markup = require('telegraf/markup')
-
+var rp = require('request-promise');
 
 var Recommendation = require('./Recommendation.js')
 
@@ -140,6 +140,7 @@ Hey ${ctx.from.first_name} se liga nisso:\n
 ♦ /info para saber quem sou!!!
 ♦ /top10 e veja o top 10 jogos mais bem avaliados!!!
 ♦ /recomendados para ver os jogos recomendados para você!!!
+♦ /conteme me diga um pouco de que voce ta achando sobre mim!
 
 		`)
 
@@ -162,6 +163,48 @@ bot.command('top10', (ctx) =>{
 		}
 	})
 })
+
+bot.command('conteme', (ctx)=>{
+	var t = ctx.update.message.text;
+	var text;
+	if(t != undefined){
+		text = t.substring(8, t.length)
+	}
+	if(text.trim().length == 0){
+		return;
+	}
+	var options = {
+	    method: 'POST',
+	    uri: 'https://ussouthcentral.services.azureml.net/workspaces/d7682dd41a0c4eb195ec56f3e5ee6868/services/9202b89e5a6f41c392e0c186c64beef2/execute?api-version=2.0&format=swagger',
+	    headers: {
+		        'Content-type': 'application/json',
+		        'Authorization':'Bearer 4gA+SPT8KHnidO5nb7OjoaMXRJPq1RApGGk9c6ISs+YswaPOiPi4rS39O4UGkzS5vweOUQZr2eFSqIfqErabYw=='
+		    },
+	    body: {
+		  "Inputs": {
+		    "input1": [
+		      {
+		        "tweet_text": text,
+		        "sentiment": ""
+		      }
+		    ]
+		  },
+		  "GlobalParameters": {}
+		},
+	    json: true // Automatically stringifies the body to JSON
+	};
+	 
+	rp(options)
+	    .then(function (parsedBody) {
+	        var result = parsedBody.Results.output1[0]['Scored Labels'];
+	        if(result != undefined){
+	        	replyRandom(ctx, result);
+	        }
+	    })
+	    .catch(function (err) {
+	        console.log(err)
+	    });
+	})
 
 bot.command('/recomendados', async(ctx) => {
 
@@ -228,5 +271,17 @@ async function replyToAvaliate(ctx, game){
 	  		callback_data: `★★★★★!${game.game_id}`
 	  	}]
 	])})
+}
+
+var positivo = ["🤣🤣🤣👌👌", "😉😁😁😊👏", "😱🤩🤩🤩🤩🤩🤩🤩"];
+var negativo = ["🤔😢😢😢😢😢", "😔😔😔😓😓", "😦😦😦😦😦😦😦😦😦"]
+function replyRandom(ctx, what){
+	var msg;
+	if(what == 'Positivo'){
+		msg = positivo[Math.floor(Math.random() * positivo.length)];
+	}else{
+		msg = negativo[Math.floor(Math.random()*negativo.length)];
+	}
+	ctx.reply(msg)
 }
 bot.launch()

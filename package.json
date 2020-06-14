@@ -11,6 +11,7 @@
   "dependencies": {
     "mathjs": "^7.0.0",
     "nedb": "^1.8.0",
+    "request-promise": "^4.2.5",
     "svd-finder": "^0.2.3",
     "svd-js": "^1.0.6",
     "tau-prolog": "^0.2.81",
