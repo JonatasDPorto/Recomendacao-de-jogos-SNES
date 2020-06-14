@@ -24,7 +24,7 @@ Exemplo:
 @GamesSNESbot fifa
 ```
 
-##Sistema de Recomendação
+## Sistema de Recomendação
 
 Foi utlizado o metodo colaborativo User-based k-Nearest Neighbors.
 
