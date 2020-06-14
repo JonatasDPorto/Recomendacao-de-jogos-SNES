@@ -1,4 +1,4 @@
-# Recomendação de jogos SNES
+# Recomendação de jogos SNES - Telegram
  
  ## Iniciando o bot
  
